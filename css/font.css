@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'FZXKB';
+    font-display: swap;
+    src: url('../font/FZXKB.TTF') format("truetype");
+}
+
+@font-face {
+    font-family: 'FZXKJW';
+    font-display: swap;
+    src: url('../font/FZXKJW.TTF') format("truetype");
+}
+
+@font-face {
+    font-family: 'FZYBXSJW';
+    font-display: swap;
+    src: url('../font/FZYBXSJW.TTF') format("truetype");
+}
+
+@font-face {
+    font-family: 'OracleBoneScript';
+    font-display: swap;
+    src: url('../font/OracleBoneScript.ttf') format("truetype");
+}
+
+@font-face {
+    font-family: 'XingKai';
+    font-display: swap;
+    src: url('../font/华文行楷.ttf') format("truetype");
+}
+
+
+@font-face {
+    font-family: 'HanYiXingKaiFan';
+    font-display: swap;
+    src: url('../font/HanYiXingKaiFan-1.ttf') format("truetype");
+}
