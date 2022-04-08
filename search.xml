@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>逆序对</title>
+      <link href="/2022/04/08/reverse-pairs2/"/>
+      <url>/2022/04/08/reverse-pairs2/</url>
+      
+        <content type="html"><![CDATA[<h2 id="题目描述">题目描述</h2><p>leetcode链接: <a href="https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/">https://leetcode-cn.com/problems/shu-zu-zhong-de-ni-xu-dui-lcof/</a><br>在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组，求出这个数组中的逆序对的总数。</p><h2 id="示例">示例</h2><blockquote><p><strong>输入</strong>: [7,5,6,4]<br><strong>输出</strong>: 5</p></blockquote><h2 id="数据范围">数据范围</h2><p><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mn>0</mn><mo>≤</mo><mtext>数组长度</mtext><mo>≤</mo><mn>50000</mn></mrow><annotation encoding="application/x-tex">0 \leq 数组长度 \leq 50000</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7804em;vertical-align:-0.136em;"></span><span class="mord">0</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8193em;vertical-align:-0.136em;"></span><span class="mord cjk_fallback">数组长度</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">50000</span></span></span></span></span></p><h2 id="具体实现">具体实现</h2><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span> &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">reversePairs</span><span class="params">(vector&lt;<span class="type">int</span>&gt;&amp; nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">solve</span>(nums, <span class="number">0</span>, nums.<span class="built_in">size</span>() - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">solve</span><span class="params">(vector&lt;<span class="type">int</span>&gt; &amp;nums, <span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(l &gt;= r) <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> mid = (l + r) &gt;&gt; <span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> t1 = <span class="built_in">solve</span>(nums, l, mid);</span><br><span class="line">        <span class="type">int</span> t2 = <span class="built_in">solve</span>(nums, mid+<span class="number">1</span>, r);</span><br><span class="line">        <span class="type">int</span> ans = t1 + t2;</span><br><span class="line"></span><br><span class="line">        <span class="type">int</span> i=l, j=mid+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span>(;j&lt;=r;j++) &#123;</span><br><span class="line">            <span class="keyword">while</span>(i&lt;=mid &amp;&amp; nums[i] &lt;= nums[j]) i++;</span><br><span class="line">            ans += (mid -i + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        i = l;</span><br><span class="line">        j = mid+<span class="number">1</span>;</span><br><span class="line">        <span class="type">int</span> k = l;</span><br><span class="line">        vector&lt;<span class="type">int</span>&gt; tmp;</span><br><span class="line">        <span class="keyword">while</span>(i&lt;=mid &amp;&amp; j&lt;=r) tmp.<span class="built_in">push_back</span>(nums[i] &lt; nums[j] ? nums[i++]:nums[j++]);</span><br><span class="line">        <span class="keyword">while</span>(i&lt;=mid) tmp.<span class="built_in">push_back</span>(nums[i++]);</span><br><span class="line">        <span class="keyword">while</span>(j&lt;=r) tmp.<span class="built_in">push_back</span>(nums[j++]);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;tmp.<span class="built_in">size</span>();i++) nums[i+l] = tmp[i];</span><br><span class="line">        <span class="keyword">return</span> ans; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> 数据结构与算法 </category>
+          
+          <category> 分治 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> leetcode </tag>
+            
+            <tag> 分治 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>巨人和鬼</title>
       <link href="/2022/04/08/giants-and-ghosts/"/>
       <url>/2022/04/08/giants-and-ghosts/</url>
