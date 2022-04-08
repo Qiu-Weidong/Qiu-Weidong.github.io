@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>对象之间的关系</title>
+      <link href="/2022/04/08/relationship-between-objects/"/>
+      <url>/2022/04/08/relationship-between-objects/</url>
+      
+        <content type="html"><![CDATA[<div class="mermaid-wrap"><pre class="mermaid-src" hidden>  pie    title Key elements in Product X    &quot;Calcium&quot; : 42.96    &quot;Potassium&quot; : 50.05    &quot;Magnesium&quot; : 10.01    &quot;Iron&quot; :  5  </pre></div>]]></content>
+      
+      
+      <categories>
+          
+          <category> 设计模式 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 设计模式 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>假山</title>
       <link href="/2022/04/08/rockery/"/>
       <url>/2022/04/08/rockery/</url>
