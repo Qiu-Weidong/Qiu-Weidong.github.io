@@ -156,8 +156,11 @@ document.addEventListener('DOMContentLoaded', function () {
         hlTools.addEventListener('click', highlightToolsFn)
         fragment.appendChild(hlTools)
       }
-
-      if (highlightHeightLimit && item.offsetHeight > highlightHeightLimit + 30) {
+      
+      // console.log('createEle: item: ');
+      // console.log(item);
+      if (highlightHeightLimit && (item.offsetHeight > highlightHeightLimit + 30 || item.offsetHeight === 0)) {
+      // if (highlightHeightLimit && item.offsetHeight > highlightHeightLimit + 30) {
         const ele = document.createElement('div')
         ele.className = 'code-expand-btn'
         ele.innerHTML = '<i class="fas fa-angle-double-down"></i>'
@@ -743,7 +746,7 @@ document.addEventListener('DOMContentLoaded', function () {
     GLOBAL_CONFIG.copyright !== undefined && addCopyright()
   }
 
-  window.refreshFn = function () {
+  window.refreshFn = function () { // 每次刷新都会执行
     initAdjust()
 
     if (GLOBAL_CONFIG_SITE.isPost) {
