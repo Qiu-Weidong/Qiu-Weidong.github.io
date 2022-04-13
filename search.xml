@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>dpdk</title>
+      <link href="/2022/04/13/dpdk/"/>
+      <url>/2022/04/13/dpdk/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Linux传统网络驱动流程">Linux传统网络驱动流程</h2><ul><li>数据包到达网卡设备</li><li>网卡设备通过DMA将收到的数据放入内存</li><li>网卡驱动触发中断，唤醒处理器</li><li>驱动软件填充读写缓冲区数据结构</li><li>数据报文到达内核的协议栈，进行处理</li><li>如果最终应用在内核态，则继续处理数据；如果最终应用在用户态，则需要将数据拷贝到用户态</li></ul><h2 id="DPDK的特点">DPDK的特点</h2><ul><li><strong>轮询而非中断</strong>，采用轮询的方式，避免的中断切换的开销。有利于大吞吐数据的处理。</li><li><strong>用户态驱动</strong>, 采用了用户态驱动的方式，避免了系统调用和数据的拷贝。</li><li><strong>亲和性与独占</strong>，线程的调度依赖于内核，可以将特定的任务指定在某个核上工作，从而避免线程间切换的开销以及线程切换造成的缓存缺失。</li><li><strong>降低访存开销</strong>，使用内存大页来减小页表，从而使得TLB的缺失率降低。</li><li><strong>数据对其</strong>，cache line等数据结构会要求对其。</li><li><strong>充分利用硬件性能</strong>，充分利用SIMD等技术以及网卡加速。</li></ul><h2 id="DPDK的基本架构">DPDK的基本架构</h2><p>dpdk的基本架构图如下所示：<br><img src="/img/dpdk.png" alt=""><br>dpdk由很多的组件库组成，主要包括核心部件库(core libararies)、平台相关模块(platform)、网卡轮询模式驱动模块(PMD-natives &amp; virtual)、QoS库、报文转发分类算法(classify)等。</p><p>位于linux kernel中的两个模块 <mark class="hl-label default">KNI</mark>  和 <mark class="hl-label default">IGB_UIO</mark>  。其中 <mark class="hl-label default">KNI</mark>  提供了使用linux kernel的内核协议栈和一些网络工具的接口。而 <mark class="hl-label default">IGB_UIO</mark>  则利用了UIO(linux User IO)技术，将网卡硬件寄存器映射到用户态。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> dpdk </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> dpdk </tag>
+            
+            <tag> 操作系统 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>SOLID原则</title>
+      <link href="/2022/04/09/solid-princeple/"/>
+      <url>/2022/04/09/solid-princeple/</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> 设计模式 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 设计模式 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>逆序对</title>
       <link href="/2022/04/08/reverse-pairs2/"/>
       <url>/2022/04/08/reverse-pairs2/</url>
