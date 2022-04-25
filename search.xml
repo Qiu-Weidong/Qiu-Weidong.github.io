@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>Qiux操作系统-目录</title>
+      <link href="/2022/04/25/qiux/directory/"/>
+      <url>/2022/04/25/qiux/directory/</url>
+      
+        <content type="html"><![CDATA[<h2 id="项目地址">项目地址</h2><ul><li>github <a href="https://github.com/Qiu-Weidong/Qiux.git">https://github.com/Qiu-Weidong/Qiux.git</a></li><li>gitee <a href="https://gitee.com/qiu-weidong/qiux.git">https://gitee.com/qiu-weidong/qiux.git</a></li></ul><h2 id="介绍">介绍</h2><p>一个简单的操作系统</p><h2 id="安装教程">安装教程</h2><p>需要工具<code>nasm</code>汇编器、<code>gcc</code>编译器，<code>make</code>构建工具，以及<code>bximage</code>制作镜像文件。如果需要调试，还需要<code>gdb</code>调试工具。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># nasm安装方法</span></span><br><span class="line">sudo apt-get install nasm</span><br><span class="line"><span class="comment"># gcc安装方法</span></span><br><span class="line">sudo apt-get install gcc</span><br><span class="line"><span class="comment"># gdb安装方法</span></span><br><span class="line">sudo apt-get install gdb</span><br><span class="line"><span class="comment"># make安装方法</span></span><br><span class="line">sudo apt-get install make</span><br><span class="line"><span class="comment"># 安装g++，这是为了后面编译bochs</span></span><br><span class="line">sudo apt-get install g++</span><br><span class="line"></span><br></pre></td></tr></table></figure><p><code>bximage</code>可以和<code>bochs</code>一同安装，方法如下：</p><ol><li>首先下载<code>bochs</code>源码，<a href="https://sourceforge.net/projects/bochs/files/bochs/2.6.11/bochs-2.6.11.tar.gz/download">bochs-2.6.11</a></li><li>解压，使用命令<code>tar -zxvf bochs-2.6.11.tar.gz</code>，解压后会出现一个文件夹<code>bochs-2.6.11</code></li><li>进入文件夹<code>bochs-2.6.11</code>，并输入以下命令</li></ol><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># --enable-gdb-stub选项是为了使用gdb来进行调试</span></span><br><span class="line">sudo ./configure --enable-gdb-stub</span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure><p>编译我们的操作系统，在Makefile的同级目录下执行<code>make</code>命令即可。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 在Makefile的同级目录下</span></span><br><span class="line">make</span><br></pre></td></tr></table></figure><p>make成功后会得到一个Qiux.img的镜像文件，我们的操作系统就在镜像文件当中</p><h2 id="使用说明">使用说明</h2><p>使用<code>qemu</code>或者<code>bochs</code>运行。如果使用<code>bochs</code>，需要配置bochsrc文件，将第8行romimage配置为你的机器的BIOS-bochs-latest文件所在的目录，并将第9行vgaromimage配置为你的VGABIOS-lgpl-latest所在的目录，如果不进行调试，请将最后一行gdbstub注释掉。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># bochs,Qiux.img所在目录</span></span><br><span class="line">bochs -f bochsrc</span><br><span class="line">或</span><br><span class="line">make run</span><br><span class="line"><span class="comment"># qemu，在Qiux.img所在目录</span></span><br><span class="line">qemu-system-x86_64 -fda Qiux.img</span><br></pre></td></tr></table></figure><h2 id="调试方法">调试方法</h2><p>使用<code>bochs</code>和<code>gdb</code>调试，请确保<code>bochs</code>使用了<code>gdbstub</code>。<br>首先将bochsrc最后一行的<code>gdbstub:enabled=1,port=1234,text_base=0,data_base=0,bss_base=0</code>取消注释，然后输入命令<code>make debug</code>，然后就可以使用gdb进行调试了。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 请将gdbstub取消注释</span></span><br><span class="line">make debug</span><br></pre></td></tr></table></figure><h2 id="运行效果">运行效果</h2><p><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/picgo/img/qiux%E6%95%88%E6%9E%9C%E5%9B%BE.PNG" alt="运行效果"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 操作系统 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> Qiux </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>汇编语言</title>
       <link href="/2022/04/24/assemble/"/>
       <url>/2022/04/24/assemble/</url>
