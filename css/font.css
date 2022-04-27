@@ -16,11 +16,11 @@
     src: url('../font/FZYBXSJW.TTF') format("truetype");
 }
 
-@font-face {
+/* @font-face {
     font-family: 'OracleBoneScript';
     font-display: swap;
     src: url('../font/OracleBoneScript.ttf') format("truetype");
-}
+} */
 
 @font-face {
     font-family: 'XingKai';
@@ -33,4 +33,10 @@
     font-family: 'HanYiXingKaiFan';
     font-display: swap;
     src: url('../font/HanYiXingKaiFan-1.ttf') format("truetype");
+}
+
+@font-face {
+    font-family: 'OracleBoneScript';
+    font-display: swap;
+    src: url('../font/FZJiaGW.TTF') format('truetype');
 }
