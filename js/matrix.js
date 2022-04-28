@@ -3,7 +3,6 @@
         fontSize = script.getAttribute("size") || 16,
         fontName = script.getAttribute("font") ||
             "OracleBoneScript";
-    console.log('matrix fontname = ' + fontName);
     
     const canvas = document.createElement("canvas"), context = canvas.getContext("2d");
     document.body.appendChild(canvas);
