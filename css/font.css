@@ -40,3 +40,9 @@
     font-display: swap;
     src: url('../font/FZJiaGW.TTF') format('truetype');
 }
+
+@font-face {
+    font-family: 'JiaGu';
+    font-display: swap;
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/picgo/font/FZJiaGW.TTF') format('truetype');
+}
