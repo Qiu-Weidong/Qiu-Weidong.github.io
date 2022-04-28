@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>F-Stack构建</title>
+      <link href="/2022/04/28/f-stack/build_guide/"/>
+      <url>/2022/04/28/f-stack/build_guide/</url>
+      
+        <content type="html"><![CDATA[<h2 id="构建方法">构建方法</h2><p>在不同的linux版本中编译f-stack的过程几乎是相同的，但仍有一些需要注意的地方。本文档旨在帮助您解决在不同 Linux 版本中编译 f-stack 时可能遇到的一些问题。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo -i</span><br><span class="line"><span class="comment"># in centos and redhat</span></span><br><span class="line">$ yum install -y git gcc openssl-devel kernel-devel-$(<span class="built_in">uname</span> -r) bc numactl-devel python</span><br><span class="line"><span class="comment"># in ubuntu</span></span><br><span class="line">$ apt-get install git gcc openssl libssl-dev linux-headers-$(<span class="built_in">uname</span> -r) bc libnuma1 libnuma-dev libpcre3 libpcre3-dev zlib1g-dev python</span><br><span class="line"></span><br><span class="line">$ <span class="built_in">mkdir</span> /data/f-stack</span><br><span class="line">$ git <span class="built_in">clone</span> https://github.com/F-Stack/f-stack.git /data/f-stack</span><br><span class="line"></span><br><span class="line"><span class="comment"># compile dpdk</span></span><br><span class="line">$ <span class="built_in">cd</span> /data/f-stack/dpdk</span><br><span class="line">$ meson -Denable_kmods=<span class="literal">true</span> build</span><br><span class="line">$ ninja -C build</span><br><span class="line">$ ninja -C build install</span><br><span class="line"></span><br><span class="line"><span class="comment"># Upgrade pkg-config while version &lt; 0.28</span></span><br><span class="line">$ <span class="built_in">cd</span> /data</span><br><span class="line">$ wget https://pkg-config.freedesktop.org/releases/pkg-config-0.29.2.tar.gz</span><br><span class="line">$ tar xzvf pkg-config-0.29.2.tar.gz</span><br><span class="line">$ <span class="built_in">cd</span> pkg-config-0.29.2</span><br><span class="line">$ ./configure --with-internal-glib</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br><span class="line">$ <span class="built_in">mv</span> /usr/bin/pkg-config /usr/bin/pkg-config.bak</span><br><span class="line">$ <span class="built_in">ln</span> -s /usr/local/bin/pkg-config /usr/bin/pkg-config</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile f-stack lib</span></span><br><span class="line">$ <span class="built_in">export</span> FF_PATH=/data/f-stack</span><br><span class="line">$ <span class="built_in">export</span> PKG_CONFIG_PATH=/usr/lib64/pkgconfig:/usr/local/lib64/pkgconfig:/usr/lib/pkgconfig</span><br><span class="line">$ <span class="built_in">cd</span> /data/f-stack/lib</span><br><span class="line">$ make</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile Nginx</span></span><br><span class="line">$ <span class="built_in">cd</span> ../app/nginx-1.16.1</span><br><span class="line">$ ./configure --prefix=/usr/local/nginx_fstack --with-ff_module</span><br><span class="line">$ make</span><br><span class="line">$ make install</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile Redis</span></span><br><span class="line">$ <span class="built_in">cd</span> ../redis-5.0.5</span><br><span class="line">$ make</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile f-stack tools</span></span><br><span class="line">$ <span class="built_in">cd</span> ../../tools</span><br><span class="line">$ make</span><br><span class="line"></span><br><span class="line"><span class="comment"># Compile helloworld examples</span></span><br><span class="line">$ <span class="built_in">cd</span> ../examples</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure><h2 id="在Ubuntu上需要进行的修改">在Ubuntu上需要进行的修改</h2><p>删除<code>f-stack/tools/netstat/Makefile</code>第70行中<code>printf</code>语句中的’'。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">-   <span class="built_in">printf</span>(<span class="string">&quot;\#define\tN%s\t%s\n&quot;</span>, <span class="built_in">toupper</span>($$<span class="number">2</span>), i++);</span><br><span class="line">+   <span class="built_in">printf</span>(<span class="string">&quot;#define\tN%s\t%s\n&quot;</span>, <span class="built_in">toupper</span>($$<span class="number">2</span>), i++);</span><br></pre></td></tr></table></figure><h2 id="在虚拟机中编译">在虚拟机中编译</h2><p>修改文件<code>f-stack/dpdk/kernel/linux/igb_uio/igb_uio.c</code>第274行。</p><figure class="highlight c"><table><tr><td class="code"><pre><span class="line">-   <span class="keyword">if</span> (pci_intx_mask_supported(udev-&gt;pdev)) &#123;</span><br><span class="line">+   <span class="keyword">if</span> (<span class="literal">true</span> || pci_intx_mask_supported(udev-&gt;pdev)) &#123;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> dpdk </category>
+          
+          <category> f-stack </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> dpdk </tag>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> f-stack </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>F-Stack的API文档</title>
       <link href="/2022/04/28/f-stack/API_reference/"/>
       <url>/2022/04/28/f-stack/API_reference/</url>
