@@ -46,3 +46,19 @@
     font-display: swap;
     src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/picgo/font/FZJiaGW.TTF') format('truetype');
 }
+@font-face {
+    font-family: '甲骨文';
+    font-display: swap;
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/FZJiaGW.TTF') format('truetype');
+}
+
+@font-face {
+    font-family: '小篆';
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/FZXZTFW.TTF');
+}
+
+@font-face {
+    font-family: '大篆';
+    font-display: swap;
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/STFJinWDZFU.TTF');
+}

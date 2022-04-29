@@ -11,17 +11,11 @@
     const fontName = 'JiaGu';
 
     var img = document.createElement("img");
-    img.src = 'https://cdn.jsdelivr.net/gh/Qiu-Weidong/picgo/img/hacker.PNG';
+    img.src = 'https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/images/hacker/hacker1.jpg';
 
     canvas.width = container.scrollWidth, canvas.height = container.scrollHeight;
     let W = canvas.width, H = canvas.height;
 
-    // let W = window.innerWidth, H = window.innerHeight;
-    // canvas.width = W; canvas.height = H;
-
-    // img.onload = function() {
-    //     context.drawImage(this, 0, 0, W, H);
-    // }
     let colunms = Math.floor(W / fontSize), drops = [], str = "一丁七万三上下不丑" +
         "且丘丙中丮丰丹乂乃之乎乘乙九乳事二于云五井亘亞亡亥亦京亯人今介从令以任企伊伏伐休何" +
         "余來俘保偁允元兄先光克兔入八公六兮共其典兹册冎冓冡冬凡出刀分刖刜初利力劦勹匕化北十千" +
