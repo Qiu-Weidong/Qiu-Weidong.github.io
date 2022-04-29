@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>f-stack开发指南</title>
+      <link href="/2022/04/29/f-stack/dev-guide/"/>
+      <url>/2022/04/29/f-stack/dev-guide/</url>
+      
+        <content type="html"><![CDATA[<p>随着网络接口卡的快速发展，使用Linux内核处理数据包的性能不佳已成为现代网络系统的瓶颈。然而，互联网增长不断增长的需求需要更高性能的网络处理解决方案。内核旁路已经出现，引起了越来越多的关注。有各种类似的技术，如：DPDK，NETMAP和PF_RING。内核旁路的主要思想是Linux仅用于处理控制流;所有数据流都在用户空间中处理。因此，内核旁路可以避免因内核包复制、线程调度、系统调用和中断而导致的性能瓶颈。此外，内核旁路可以通过多优化方法实现更高的性能。在各种技术中，DPDK已被广泛使用，因为它与内核调度和积极的社区支持更彻底地隔离。</p><p>F-Stack是一个基于DPDK的开源高性能网络框架，具有以下特点：</p><ul><li>网卡满载时可实现的超高网络性能：1000万并发连接、500万RPS、100万CPS。</li><li>移植 FreeBSD 11.01 用户空间堆栈，它提供了完整的堆栈功能，并削减了大量不相关的功能。这大大提高了网络性能。</li><li>支持Nginx，Redis和其他成熟的应用程序。服务可以轻松使用 F-Stack。</li><li>通过多进程架构轻松扩展。</li><li>提供微线程接口。具有有状态应用程序的各种应用程序可以轻松使用 F-Stack 获得高性能，而无需处理复杂的异步逻辑。</li><li>提供 Epoll/Kqueue 接口，允许多种应用程序轻松使用 F-Stack。</li></ul><h2 id="F-Stack结构">F-Stack结构</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">├── app  -- Nginx(1.16.1)/Redis(3.2.8)/Microthread framework</span><br><span class="line">├── config.ini</span><br><span class="line">├── doc</span><br><span class="line">├── dpdk -- Intel DPDK(16.07) directory</span><br><span class="line">├── example -- DEMO</span><br><span class="line">├── freebsd -- FreeBSD(11.0) Network Stack directory</span><br><span class="line">├── lib -- F-Stack lib directory</span><br><span class="line">├── mk</span><br><span class="line">└── start.sh</span><br></pre></td></tr></table></figure><h2 id="DPDK初始化">DPDK初始化</h2><h3 id="PORT-SOCKET">PORT &amp; SOCKET</h3><p>F-Stack 简化了标准 DPDK 的初始化。通过设置 NIC 端口和 CPU 核心掩码，可以在不同的套接字节点上设置端口与 CPU 和 lcore 的绑定关系。如果未设置绑定关系，则默认情况下将设置端口 0 和套接字节点 0。</p><h3 id="KNI-related">KNI related</h3><p>如果服务器没有专用端口，或者所有端口都用于业务进程，则需要在配置文件中打开KNI，并设置相关的协议和端口号来决定哪些数据包需要由F-Stack处理，剩余的数据包将由KNI转发到内核，以支持SSH管理功能。</p><h3 id="FreeBSD-Network-Stack和DPDK的修订">FreeBSD Network Stack和DPDK的修订</h3>]]></content>
+      
+      
+      <categories>
+          
+          <category> dpdk </category>
+          
+          <category> f-stack </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> dpdk </tag>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> f-stack </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>F-Stack构建</title>
       <link href="/2022/04/28/f-stack/build_guide/"/>
       <url>/2022/04/28/f-stack/build_guide/</url>
