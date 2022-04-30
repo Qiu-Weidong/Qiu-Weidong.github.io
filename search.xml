@@ -4,6 +4,35 @@
   
     
     <entry>
+      <title>vscode配置CTeX编写环境</title>
+      <link href="/2022/04/30/ctex/install/"/>
+      <url>/2022/04/30/ctex/install/</url>
+      
+        <content type="html"><![CDATA[<h2 id="安装CTeX">安装CTeX</h2><p>下载地址:</p><ul><li><a href="http://www.ctex.org/CTeXDownload">http://www.ctex.org/CTeXDownload</a></li><li>清华大学镜像: <a href="https://mirrors.tuna.tsinghua.edu.cn/ctex/legacy/2.9/">https://mirrors.tuna.tsinghua.edu.cn/ctex/legacy/2.9/</a></li><li>中科大开源镜像: <a href="http://mirrors.ustc.edu.cn/ctex/legacy/2.9/">http://mirrors.ustc.edu.cn/ctex/legacy/2.9/</a></li></ul><p>笔者这里采用的时完整的版本，读者可根据需要选择Basic版本。<br>下载好安装程序后，双击运行，一路下一步即可，语言选择中文简体(Chinese Simplified)，安装组件可以不选择<code>WinEdt</code>，因为我们采用vscode作为编辑器。<br>安装可能导致环境变量被覆盖，可以事先将环境变量备份。</p><h2 id="vscode配置CTeX">vscode配置CTeX</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> latex </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> vscode </tag>
+            
+            <tag> CTeX </tag>
+            
+            <tag> latex </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>graphviz安装教程</title>
       <link href="/2022/04/30/graphviz/start/"/>
       <url>/2022/04/30/graphviz/start/</url>
