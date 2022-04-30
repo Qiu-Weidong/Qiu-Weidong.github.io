@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>graphviz安装教程</title>
+      <link href="/2022/04/30/graphviz/start/"/>
+      <url>/2022/04/30/graphviz/start/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Linux下的安装">Linux下的安装</h2><p>在linux下直接使用命令即可安装</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ubuntu</span></span><br><span class="line">sudo apt install graphviz</span><br><span class="line"><span class="comment"># Fedora</span></span><br><span class="line">sudo yum install graphviz</span><br><span class="line"><span class="comment"># Debian</span></span><br><span class="line">sudo apt install graphviz</span><br></pre></td></tr></table></figure><h2 id="windows下的安装">windows下的安装</h2><p>首先下载安装程序，下载地址: <a href="https://graphviz.org/download/">https://graphviz.org/download/</a>。<br>找到对应的安装程序，笔者这里选择的是<code>graphviz-3.0.0 (64-bit) EXE installer [sha256]</code>。<br>下载后运行安装程序，当询问是否添加环境变量时选择添加当前用户。<br><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/images/graphviz/%E6%B7%BB%E5%8A%A0%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F.JPG" alt=""><br>然后一路下一步即可。</p><p>安装完成后，打开终端，输入命令</p><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">dot -version</span><br></pre></td></tr></table></figure><p>出现下图所示的结果，表明安装成功。<br><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/images/graphviz/%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F.JPG" alt=""></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> graphviz </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> graphviz </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>使用VMWare安装Ubuntu</title>
       <link href="/2022/04/30/OS/vmware/"/>
       <url>/2022/04/30/OS/vmware/</url>
