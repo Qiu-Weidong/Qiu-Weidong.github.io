@@ -42,11 +42,6 @@
 }
 
 @font-face {
-    font-family: 'JiaGu';
-    font-display: swap;
-    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/picgo/font/FZJiaGW.TTF') format('truetype');
-}
-@font-face {
     font-family: '甲骨文';
     font-display: swap;
     src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/FZJiaGW.TTF') format('truetype');
