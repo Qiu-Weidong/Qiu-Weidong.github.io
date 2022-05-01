@@ -4,6 +4,39 @@
   
     
     <entry>
+      <title>F-Stack编译</title>
+      <link href="/2022/05/01/f-stack/build/"/>
+      <url>/2022/05/01/f-stack/build/</url>
+      
+        <content type="html"><![CDATA[<p>首先从git上将F-Stack源码克隆下来:</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/F-Stack/f-stack.git</span><br></pre></td></tr></table></figure><p>接下来安装<code>libnuma-dev</code></p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># on Centos</span></span><br><span class="line">yum install numactl-devel          </span><br><span class="line"></span><br><span class="line"><span class="comment"># on Ubuntu</span></span><br><span class="line">sudo apt-get install libnuma-dev  </span><br></pre></td></tr></table></figure><p>接下来编译dpdk</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入dpdk文件夹</span></span><br><span class="line"><span class="built_in">cd</span> f-stack/dpdk</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装meson， 如果没有安装过的话</span></span><br><span class="line">sudo apt install meson</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行meson</span></span><br><span class="line">meson -Denable_kmods=<span class="literal">true</span> build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用ninja编译</span></span><br><span class="line">ninja -C build</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装编译结果</span></span><br><span class="line">ninja -C build install</span><br></pre></td></tr></table></figure><p>然后，需要设置巨页，设置的方法是向相关的配置文件中写入巨页的页面数。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1024 &gt; /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages</span><br></pre></td></tr></table></figure><p>在<code>NUMA</code>架构的系统下，需要对每一个<code>NUMA</code>节点分配巨页。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1024 &gt; /sys/devices/system/node/node0/hugepages/hugepages-2048kB/nr_hugepages</span><br><span class="line"><span class="built_in">echo</span> 1024 &gt; /sys/devices/system/node/node1/hugepages/hugepages-2048kB/nr_hugepages</span><br></pre></td></tr></table></figure><div class="note blue icon modern"><i class="note-icon fas fa-bullhorn"></i><p>注意: 以上的巨页都是2MB的页面。对于1GB的页面，不能在系统启动后在预留巨页大小。</p></div><p>dpdk使用巨页。方法如下</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 新建一个文件夹</span></span><br><span class="line"><span class="built_in">mkdir</span> /mnt/huge</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将巨页挂载到新建的文件夹上面</span></span><br><span class="line">mount -t hugetlbfs nodev /mnt/huge</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> dpdk </category>
+          
+          <category> f-stack </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 计算机网络 </tag>
+            
+            <tag> dpdk </tag>
+            
+            <tag> 操作系统 </tag>
+            
+            <tag> f-stack </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>vscode配置CTeX编写环境</title>
       <link href="/2022/04/30/ctex/install/"/>
       <url>/2022/04/30/ctex/install/</url>
