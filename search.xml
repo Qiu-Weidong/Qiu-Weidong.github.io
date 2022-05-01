@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>编译llvm</title>
+      <link href="/2022/05/01/llvm/build/"/>
+      <url>/2022/05/01/llvm/build/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Windows下编译LLVM">Windows下编译LLVM</h2><h3 id="安装Visual-Studio">安装Visual Studio</h3><p>首先安装visual studio，并选择C++。</p><p>点击开始菜单，滚动到字母V，找到visual studio 2022，点击展开，选择Developer powershell for VS 2022，点击打开。</p><p>需要配置的相关变量<br>CMAKE_BUILD_TYPE=RELEASE<br>LLVM_TARGETS_TO_BUILD=“X86”<br>LLVM_ENABLE_PROJECTS=“Clang”</p><p>如果要启用异常，则配置<br>LLVM_ENABLE_EH=ON<br>如果要启用RTTI<br>LLVM_ENABLE_RTTI=ON</p><p>LLVM_OPTIMIZED_TABLEGEN=ON</p><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">cmake -G Ninja -DCMAKE_BUILD_TYPE=RELEASE -DLLVM_TARGETS_TO_BUILD=&quot;X86&quot; -DLLVM_ENABLE_PROJECTS=&quot;Clang&quot;  -DLLVM_OPTIMIZED_TABLEGEN=ON</span><br></pre></td></tr></table></figure><p>建议关闭所有的应用程序，只保留开发人员power shell。<br>运行命令</p><figure class="highlight cmd"><table><tr><td class="code"><pre><span class="line">ninja </span><br></pre></td></tr></table></figure><p>经过漫长的等待，编译成功。<br>以管理员方式重新打开开发人员powershell，运行安装命令</p><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">ninja install</span><br></pre></td></tr></table></figure><p>成功将llvm安装到我们的电脑里面。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>F-Stack编译</title>
       <link href="/2022/05/01/f-stack/build/"/>
       <url>/2022/05/01/f-stack/build/</url>
