@@ -100,14 +100,17 @@ function getRandom(option) {
 function startSakura() {
     requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame ||
         window.msRequestAnimationFrame || window.oRequestAnimationFrame;
+    const container = document.getElementById('page-header');
     var canvas = document.createElement('canvas'),
         cxt;
     staticx = true;
-    canvas.height = window.innerHeight;
-    canvas.width = window.innerWidth;
-    canvas.setAttribute('style', 'position: fixed;left: 0;top: 0;pointer-events: none;');
+    canvas.height = /*window.innerHeight*/ container.clientWidth;
+    canvas.width = /*window.innerWidth*/ container.clientHeight;
+    // canvas.setAttribute('style', 'position: fixed;left: 0;top: 0;pointer-events: none;');
+    canvas.setAttribute('style', 'position: fixed;pointer-events: none;');
     canvas.setAttribute('id', 'canvas_sakura');
-    document.getElementsByTagName('body')[0].appendChild(canvas);
+    // document.getElementsByTagName('body')[0].appendChild(canvas);
+    container.appendChild(canvas);
     cxt = canvas.getContext('2d');
     var sakuraList = new SakuraList();
     for (var i = 0; i < 50; i++) {
