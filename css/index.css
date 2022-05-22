@@ -1655,7 +1655,7 @@ figure.highlight pre .javascript .function {
 #article-container pre,
 #article-container figure.highlight {
   overflow: auto;
-  margin: 0 0 0px;
+  margin: 0 0 20px;
   padding: 0;
   background: var(--hl-bg);
   color: var(--hl-color);
