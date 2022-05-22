@@ -1,6 +1,6 @@
 /* 自定义的css写在这里 */
 .poem-container {
-    font-family: '华文行楷', '方正行楷繁体', '方正行楷简体',  Xingkai SC, KaiTi, Georgia, "Times New Roman", serif;
+    font-family:  '方正行楷繁体', '方正行楷简体', '华文行楷';
     font-size: 1.2em;
     margin: 1.6em 20px;
     text-align: center;
