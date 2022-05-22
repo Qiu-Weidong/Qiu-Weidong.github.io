@@ -1487,7 +1487,7 @@ a:hover {
 #site-name,
 #aside-content .author-info__name,
 #aside-content .author-info__description {
-  font-family: FZXKB, FZXKJW, FZYBXSJW, XingKai;
+  font-family: 方正行楷繁体, 方正行楷简体, 华文行楷, FZXKB, FZXKJW, FZYBXSJW, XingKai;
 }
 .is-center {
   text-align: center;

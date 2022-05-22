@@ -1,48 +1,36 @@
 @font-face {
-    font-family: 'FZXKB';
+    font-family: '方正行楷繁体';
     font-display: swap;
-    src: url('../font/FZXKB.TTF') format("truetype");
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/方正行楷繁体.TTF') format("truetype");
 }
 
 @font-face {
-    font-family: 'FZXKJW';
+    font-family: '方正行楷简体';
     font-display: swap;
-    src: url('../font/FZXKJW.TTF') format("truetype");
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/方正行楷简体.TTF') format("truetype");
 }
 
 @font-face {
-    font-family: 'FZYBXSJW';
+    font-family: '方正硬笔行书简体';
     font-display: swap;
-    src: url('../font/FZYBXSJW.TTF') format("truetype");
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/方正硬笔行书简体.TTF') format("truetype");
 }
 
-/* @font-face {
-    font-family: 'OracleBoneScript';
-    font-display: swap;
-    src: url('../font/OracleBoneScript.ttf') format("truetype");
-} */
-
 @font-face {
-    font-family: 'XingKai';
+    font-family: '汉仪行楷繁';
     font-display: swap;
-    src: url('../font/华文行楷.ttf') format("truetype");
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/汉仪行楷繁.ttf') format("truetype");
 }
 
 
 @font-face {
-    font-family: 'HanYiXingKaiFan';
+    font-family: '华文行楷';
     font-display: swap;
-    src: url('../font/HanYiXingKaiFan-1.ttf') format("truetype");
+    src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/华文行楷.ttf') format("truetype");
 }
 
 @font-face {
-    font-family: 'OracleBoneScript';
-    font-display: swap;
-    src: url('../font/FZJiaGW.TTF') format('truetype');
-}
-
-@font-face {
-    font-family: '甲骨文';
+    font-family: '方正甲骨文';
     font-display: swap;
     src: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/pictures/fonts/FZJiaGW.TTF') format('truetype');
 }
