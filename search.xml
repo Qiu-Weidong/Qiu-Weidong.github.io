@@ -4,6 +4,131 @@
   
     
     <entry>
+      <title>LLVM如何实现字符串类型</title>
+      <link href="/2022/06/12/llvm/How-to-Implement-a-String-Type-in-LLVM/"/>
+      <url>/2022/06/12/llvm/How-to-Implement-a-String-Type-in-LLVM/</url>
+      
+        <content type="html"><![CDATA[<p>LLVM中有两种方式实现字符串：</p><ul><li>直接使用LLVM IR实现</li><li>使用高级语言实现并生成LLVM IR</li></ul><p>我个人更喜欢使用第二种方法，但为了示例，我将继续说明 LLVM IR 中一个简单但有用的字符串类型。 它采用 32 位架构，因此如果您的目标是 64 位架构，请将所有出现的 <code>i32</code> 替换为 <code>i64</code>。<br>我们将创建一个动态的、可变的字符串类型，它可以附加内容，也可以插入内容，转换大小写等等，这取决于定义了哪些支持函数来操作字符串类型。</p><figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line"><span class="comment">; The actual type definition for our &#x27;String&#x27; type.</span></span><br><span class="line"><span class="variable">%String</span> <span class="operator">=</span> <span class="keyword">type</span> &#123;</span><br><span class="line">    <span class="type">i8</span>*<span class="punctuation">,</span>     <span class="comment">; 0: buffer; pointer to the character buffer</span></span><br><span class="line">    <span class="type">i32</span><span class="punctuation">,</span>     <span class="comment">; 1: length; the number of chars in the buffer</span></span><br><span class="line">    <span class="type">i32</span><span class="punctuation">,</span>     <span class="comment">; 2: maxlen; the maximum number of chars in the buffer</span></span><br><span class="line">    <span class="type">i32</span>      <span class="comment">; 3: factor; the number of chars to preallocate when growing</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">define</span> <span class="keyword">fastcc</span> void <span class="title">@String_Create_Default</span>(<span class="variable">%String</span>* <span class="variable">%this</span>) <span class="keyword">nounwind</span> &#123;</span><br><span class="line">    <span class="comment">; Initialize &#x27;buffer&#x27;.</span></span><br><span class="line">    <span class="variable">%1</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i8</span>* <span class="keyword">null</span><span class="punctuation">,</span> <span class="type">i8</span>** <span class="variable">%1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; Initialize &#x27;length&#x27;.</span></span><br><span class="line">    <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; Initialize &#x27;maxlen&#x27;.</span></span><br><span class="line">    <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%3</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; Initialize &#x27;factor&#x27;.</span></span><br><span class="line">    <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">3</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i32</span> <span class="number">16</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%4</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">ret</span> void</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="type">i8</span>* <span class="title">@malloc</span>(<span class="type">i32</span>)</span><br><span class="line"><span class="keyword">declare</span> void <span class="title">@free</span>(<span class="type">i8</span>*)</span><br><span class="line"><span class="keyword">declare</span> <span class="type">i8</span>* <span class="title">@memcpy</span>(<span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i8</span>*<span class="punctuation">,</span> <span class="type">i32</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">define</span> <span class="keyword">fastcc</span> void <span class="title">@String_Delete</span>(<span class="variable">%String</span>* <span class="variable">%this</span>) <span class="keyword">nounwind</span> &#123;</span><br><span class="line">    <span class="comment">; Check if we need to call &#x27;free&#x27;.</span></span><br><span class="line">    <span class="variable">%1</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span></span><br><span class="line">    <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i8</span>** <span class="variable">%1</span></span><br><span class="line">    <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">icmp</span> <span class="keyword">ne</span> <span class="type">i8</span>* <span class="variable">%2</span><span class="punctuation">,</span> <span class="keyword">null</span></span><br><span class="line">    <span class="keyword">br</span> <span class="type">i1</span> <span class="variable">%3</span><span class="punctuation">,</span> label <span class="variable">%free_begin</span><span class="punctuation">,</span> label <span class="variable">%free_close</span></span><br><span class="line"></span><br><span class="line">free_begin:</span><br><span class="line">    <span class="keyword">call</span> void <span class="title">@free</span>(<span class="type">i8</span>* <span class="variable">%2</span>)</span><br><span class="line">    <span class="keyword">br</span> label <span class="variable">%free_close</span></span><br><span class="line"></span><br><span class="line">free_close:</span><br><span class="line">    <span class="keyword">ret</span> void</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">define</span> <span class="keyword">fastcc</span> void <span class="title">@String_Resize</span>(<span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="variable">%value</span>) &#123;</span><br><span class="line">    <span class="comment">; %output = malloc(%value)</span></span><br><span class="line">    <span class="variable">%output</span> <span class="operator">=</span> <span class="keyword">call</span> <span class="type">i8</span>* <span class="title">@malloc</span>(<span class="type">i32</span> <span class="variable">%value</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">; todo: check return value</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; %buffer = this-&gt;buffer</span></span><br><span class="line">    <span class="variable">%1</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span></span><br><span class="line">    <span class="variable">%buffer</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i8</span>** <span class="variable">%1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; %length = this-&gt;length</span></span><br><span class="line">    <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">1</span></span><br><span class="line">    <span class="variable">%length</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span>* <span class="variable">%2</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">; memcpy(%output, %buffer, %length)</span></span><br><span class="line">    <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">call</span> <span class="type">i8</span>* <span class="title">@memcpy</span>(<span class="type">i8</span>* <span class="variable">%output</span><span class="punctuation">,</span> <span class="type">i8</span>* <span class="variable">%buffer</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="variable">%length</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">; free(%buffer)</span></span><br><span class="line">    <span class="keyword">call</span> void <span class="title">@free</span>(<span class="type">i8</span>* <span class="variable">%buffer</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">; this-&gt;buffer = %output</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i8</span>* <span class="variable">%output</span><span class="punctuation">,</span> <span class="type">i8</span>** <span class="variable">%1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">;this-&gt;maxlen = %value (value that was passed into @malloc is the new maxlen)</span></span><br><span class="line">    <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* this<span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">2</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%value</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%4</span></span><br><span class="line">    <span class="keyword">ret</span> void</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">define</span> <span class="keyword">fastcc</span> void <span class="title">@String_Add_Char</span>(<span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i8</span> <span class="variable">%value</span>) &#123;</span><br><span class="line">    <span class="comment">; Check if we need to grow the string.</span></span><br><span class="line">    <span class="variable">%1</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">1</span></span><br><span class="line">    <span class="variable">%length</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span>* <span class="variable">%1</span></span><br><span class="line">    <span class="variable">%2</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">2</span></span><br><span class="line">    <span class="variable">%maxlen</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span>* <span class="variable">%2</span></span><br><span class="line">    <span class="comment">; if length == maxlen:</span></span><br><span class="line">    <span class="variable">%3</span> <span class="operator">=</span> <span class="keyword">icmp</span> <span class="keyword">eq</span> <span class="type">i32</span> <span class="variable">%length</span><span class="punctuation">,</span> <span class="variable">%maxlen</span></span><br><span class="line">    <span class="keyword">br</span> <span class="type">i1</span> <span class="variable">%3</span><span class="punctuation">,</span> label <span class="variable">%grow_begin</span><span class="punctuation">,</span> label <span class="variable">%grow_close</span></span><br><span class="line"></span><br><span class="line">grow_begin:</span><br><span class="line">    <span class="variable">%4</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">3</span></span><br><span class="line">    <span class="variable">%factor</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i32</span>* <span class="variable">%4</span></span><br><span class="line">    <span class="variable">%5</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="type">i32</span> <span class="variable">%maxlen</span><span class="punctuation">,</span> <span class="variable">%factor</span></span><br><span class="line">    <span class="keyword">call</span> void <span class="title">@String_Resize</span>(<span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="variable">%5</span>)</span><br><span class="line">    <span class="keyword">br</span> label <span class="variable">%grow_close</span></span><br><span class="line"></span><br><span class="line">grow_close:</span><br><span class="line">    <span class="variable">%6</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="variable">%String</span>* <span class="variable">%this</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="number">0</span></span><br><span class="line">    <span class="variable">%buffer</span> <span class="operator">=</span> <span class="keyword">load</span> <span class="type">i8</span>** <span class="variable">%6</span></span><br><span class="line">    <span class="variable">%7</span> <span class="operator">=</span> <span class="keyword">getelementptr</span> <span class="type">i8</span>* <span class="variable">%buffer</span><span class="punctuation">,</span> <span class="type">i32</span> <span class="variable">%length</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i8</span> <span class="variable">%value</span><span class="punctuation">,</span> <span class="type">i8</span>* <span class="variable">%7</span></span><br><span class="line">    <span class="variable">%8</span> <span class="operator">=</span> <span class="keyword">add</span> <span class="type">i32</span> <span class="variable">%length</span><span class="punctuation">,</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">store</span> <span class="type">i32</span> <span class="variable">%8</span><span class="punctuation">,</span> <span class="type">i32</span>* <span class="variable">%1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">ret</span> void</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>结语</title>
+      <link href="/2022/06/12/llvm/Epilogue/"/>
+      <url>/2022/06/12/llvm/Epilogue/</url>
+      
+        <content type="html"><![CDATA[<p>请记住，通过使用 <code>clang/clang++</code> 编译器的 <code>-emit-llvm</code> 选项可以学到很多东西。 这使您有机会看到实时生产编译器的运行情况以及它如何精确地执行操作。</p><p>如果您通过这种方式发现了一些新内容，或者本文档中有任何错误，或者您需要比此处提供的更多信息，请在 <code>Github</code> 上创建 <code>issue</code>。</p><h2 id="延申阅读">延申阅读</h2><p>本章列出了一些读者可能感兴趣的资源：</p><ul><li>LLVM documentation <a href="http://llvm.org/docs/">http://llvm.org/docs/</a></li><li>Modern Compiler Implementation in Java, 2nd Edition.</li><li>Eli Bendersky’s collection of code examples for using LLVM/clang, <a href="https://github.com/eliben/llvm-clang-samples">https://github.com/eliben/llvm-clang-samples</a></li><li>“How Clang Compiles a Function” by John Regehr, June 2018, <a href="https://blog.regehr.org/archives/1605">https://blog.regehr.org/archives/1605</a></li></ul><h2 id="贡献">贡献</h2><p>如果您想为本文档做出贡献，您可以：</p><ul><li>在github上创建<a href="https://github.com/f0rki/mapping-high-level-constructs-to-llvm-ir/issues">issue</a></li><li>fork并修改本文档。我们很乐意合并任何拉取请求或接受补丁。</li></ul><h2 id="致谢">致谢</h2><p>对以下贡献者表示由衷的感谢：</p><ul><li>Michael Rodler (current maintainer and back-porter from MeWeb markup to GitHub markdown).</li><li>Mikael Egevig (original author of the document itself - under the name of Mikael Lyngvig).</li><li>Dirkjan Ochtman (basically all the generator-related stuff by giving me some crucial samples).</li><li>Eli Bendersky (for small grammar fixes and mention of opt’s .bc output).</li><li>Sean Silva (for using proper C++11 lambda syntax in lambda samples).</li><li>Isaac Dupree (for correction the name of ‘@’: It is “at-sign”, not “ampersand”).</li><li>Wilfred Hughes (i became index and addition of separator between generator C++ and LLVM IR code).</li><li>Kenneth Ho (correction to C++11 lambda example and C++ exception handling sample).</li><li>Xing GUO (correction to various typos, updates to LLVM 8 syntax)<br>上面有你的名字吗，如果没有，那么欢迎为本文档做出贡献吧！</li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>操作系统接口</title>
+      <link href="/2022/06/12/llvm/Interfacing-to-Operating-Systems/"/>
+      <url>/2022/06/12/llvm/Interfacing-to-Operating-Systems/</url>
+      
+        <content type="html"><![CDATA[<h2 id="POSIX操作系统接口">POSIX操作系统接口</h2><h2 id="windows操作系统接口">windows操作系统接口</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>与运行时库交互</title>
+      <link href="/2022/06/12/llvm/Interoperating-with-Runtime-Library/"/>
+      <url>/2022/06/12/llvm/Interoperating-with-Runtime-Library/</url>
+      
+        <content type="html"><![CDATA[<p>提供一组运行时支持函数是很常见的，这些函数是用 LLVM IR 之外的另一种语言编写的，并且与这样的运行时库进行接口非常容易。 本文档的示例中使用 <code>malloc</code> 和 <code>free</code> 作为外部定义的运行时函数的示例。</p><p>自定义的非 IR 运行时库函数的优点是它可以手动优化，以在特定标准下提供最佳性能。 此外，自定义的非 IR 运行时库函数可以显式使用 LLVM 基础架构之外的本机指令。</p><p>IR 运行时库函数的优点是它们可以通过优化器进行优化，因此也可以自动内联。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>高级结构</title>
+      <link href="/2022/06/12/llvm/Advanced-Functional-Constructs/"/>
+      <url>/2022/06/12/llvm/Advanced-Functional-Constructs/</url>
+      
+        <content type="html"><![CDATA[<p>在本章中，我们将研究各种非常有用且使用越来越广泛的非 OOP 结构。</p><h2 id="λ函数">λ函数</h2><h2 id="构造器">构造器</h2>]]></content>
+      
+      
+      <categories>
+          
+          <category> llvm </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> llvm </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>异常处理</title>
       <link href="/2022/06/12/llvm/Exception-Handling/"/>
       <url>/2022/06/12/llvm/Exception-Handling/</url>
