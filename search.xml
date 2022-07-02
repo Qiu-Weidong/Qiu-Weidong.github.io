@@ -8,7 +8,7 @@
       <link href="/2022/07/02/antlr4/install/"/>
       <url>/2022/07/02/antlr4/install/</url>
       
-        <content type="html"><![CDATA[<h2 id="Java安装">Java安装</h2><p>安装antlr4首先需要安装java环境。</p><h3 id="linux安装java">linux安装java</h3><p>以Ubuntu系统为例，使用一条命令即可安装java。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install openjdk-8-jdk</span><br></pre></td></tr></table></figure><h3 id="windows安装java">windows安装java</h3>]]></content>
+        <content type="html"><![CDATA[<h2 id="Java安装">Java安装</h2><p>安装antlr4首先需要安装java环境。</p><h3 id="linux安装java">linux安装java</h3><p>以Ubuntu系统为例，使用一条命令即可安装java。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install openjdk-8-jdk</span><br></pre></td></tr></table></figure><h3 id="windows安装java">windows安装java</h3><p>首先从<a href="https://www.oracle.com/java/technologies/downloads/#jdk18-windows">官网</a>下载java安装包。</p><h2 id="grun的常用选项">grun的常用选项</h2><ul><li><strong>tokens</strong> 打印出记号流。</li><li><strong>tree</strong> 以LISP风格的文本形式打印出语法分析树。</li><li><strong>gui</strong> 在对话框中可视化地显示语法分析树。</li><li><strong>ps file</strong> 在PostScript中生成一个可视化的语法分析树表示，并把它存储在file文件中。</li><li><strong>encoding</strong> <strong>encodingname</strong> 指定输入文件的编码。</li><li><strong>trace</strong> 在进入/退出规则前打印规则名字和当前的记号。</li><li><strong>diagnostics</strong> 分析时打开诊断消息。此生成消息仅用于异常情况，如二义性输入短语。</li><li><strong>SLL</strong> 使用更快但稍弱的分析策略。</li></ul><p>grun的使用方式如下：</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">grun 语法名称 开始符号 选项</span><br></pre></td></tr></table></figure>]]></content>
       
       
       <categories>
