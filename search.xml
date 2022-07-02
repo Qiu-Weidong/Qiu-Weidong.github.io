@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>antlr4安装</title>
+      <link href="/2022/07/02/antlr4/install/"/>
+      <url>/2022/07/02/antlr4/install/</url>
+      
+        <content type="html"><![CDATA[<h2 id="Java安装">Java安装</h2><p>安装antlr4首先需要安装java环境。</p><h3 id="linux安装java">linux安装java</h3><p>以Ubuntu系统为例，使用一条命令即可安装java。</p><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt install openjdk-8-jdk</span><br></pre></td></tr></table></figure><h3 id="windows安装java">windows安装java</h3>]]></content>
+      
+      
+      <categories>
+          
+          <category> antlr4 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> antlr4 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>SFML编译和安装</title>
       <link href="/2022/06/26/sfml/sfml-build/"/>
       <url>/2022/06/26/sfml/sfml-build/</url>
@@ -1515,7 +1540,7 @@
       <link href="/2022/04/09/solid-princeple/"/>
       <url>/2022/04/09/solid-princeple/</url>
       
-        <content type="html"><![CDATA[<blockquote id="poem-container" class="poem-container"><p>老大那堪说。似而今、元龙臭味，孟公瓜葛。我病君来高歌饮，惊散楼头飞雪。笑富贵千钧如发。硬语盘空谁来听？记当时、只有西窗月。重进酒，换鸣瑟。<br>事无两样人心别。问渠侬：神州毕竟，几番离合？汗血盐车无人顾，千里空收骏骨。正目断关河路绝。我最怜君中宵舞，道“男儿到死心如铁”。看试手，补天裂。</p><footer style="text-align: right"><strong>辛弃疾</strong><cite>《贺新郎·同父见和再用韵答之》</cite></footer></blockquote><h2 id="单一职责原则">单一职责原则</h2><p>尽量让每个类只负责软件中的一个功能，并将该功能完全封装(你也可称之为隐藏)在该类中。</p><h2 id="开闭原则">开闭原则</h2><p>对于扩展，类应该是<code>开放</code>的；对于修改，类则应是<code>封闭</code>的。</p>]]></content>
+        <content type="html"><![CDATA[<blockquote id="poem-container" class="poem-container"><p>老大那堪说。似而今、元龙臭味，孟公瓜葛。我病君来高歌饮，惊散楼头飞雪。笑富贵千钧如发。硬语盘空谁来听？记当时、只有西窗月。重进酒，换鸣瑟。<br>事无两样人心别。问渠侬：神州毕竟，几番离合？汗血盐车无人顾，千里空收骏骨。正目断关河路绝。我最怜君中宵舞，道“男儿到死心如铁”。看试手，补天裂。</p><footer style="text-align: right"><strong>辛弃疾</strong><cite>《贺新郎·同父见和再用韵答之》</cite></footer></blockquote><h2 id="单一职责原则">单一职责原则</h2><p>尽量让每个类只负责软件中的一个功能，并将该功能完全封装(你也可称之为隐藏)在该类中。</p><h2 id="开闭原则">开闭原则</h2><p>对于扩展，类应该是<code>开放</code>的；对于修改，类则应是<code>封闭</code>的。可以使用继承的方式对类进行扩展。</p><h2 id="里氏替换原则">里氏替换原则</h2><p>派生类必须要对基类兼容。该原则具有以下一些要求。</p><ul><li><strong>派生类方法的参数类型必须与其基类的参数类型相匹配或更加抽象</strong>。</li><li><strong>派生类方法的返回值类型必须与基类方法的返回值类型或是其基类别相匹配</strong>。</li><li><strong>派生类中的方法不应抛出基础方法预期之外的异常类型</strong>。</li><li><strong>派生类不应该加强其前置条件</strong>。</li><li><strong>派生类不能削弱其后置条件</strong>。</li><li><strong>基类的不变量必须保留</strong>。</li><li><strong>派生类不能修改基类中私有成员变量的值</strong>。</li></ul><div class="note blue icon modern"><i class="note-icon fas fa-bullhorn"></i><p>对于绝大部分现代编程语言， 特别是静态类型的编程语言（Java 和 C# 等等），这些规则已内置于其中。如果违反了这些规则，你将无法对程序进行编译。</p></div><h2 id="接口隔离原则">接口隔离原则</h2><p>将一个臃肿的接口拆分为多个接口，而类不实现它不需要的接口。</p><h2 id="依赖倒置原则">依赖倒置原则</h2><p>高层次的类不应该依赖于低层次的类。 两者都应该依赖于抽象接口。抽象接口不应依赖于具体实现。具体实现应该依赖于抽象接口。</p>]]></content>
       
       
       <categories>
