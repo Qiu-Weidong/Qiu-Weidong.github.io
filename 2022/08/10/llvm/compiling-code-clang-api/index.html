@@ -1,0 +1,247 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>使用clang API来编译代码 | 邱维东</title><meta name="author" content="邱维东"><meta name="copyright" content="邱维东"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这篇博客翻译自https:&#x2F;&#x2F;fdiv.net&#x2F;2012&#x2F;08&#x2F;15&#x2F;compiling-code-clang-api。 朋友，你有尝试过使用clang吗？clang是一个开源的编译器，正处于活跃的开发当中。clang的目标是代替GCC来编译C、C++以及Objective-C。和GCC相比，clang更快，并且能够生成相对更快的代码，还可以输出更多有用的错误信息。 如果你想要以编程的方式来编译代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用clang API来编译代码">
+<meta property="og:url" content="https://qiu-weidong.github.io/2022/08/10/llvm/compiling-code-clang-api/index.html">
+<meta property="og:site_name" content="邱维东">
+<meta property="og:description" content="这篇博客翻译自https:&#x2F;&#x2F;fdiv.net&#x2F;2012&#x2F;08&#x2F;15&#x2F;compiling-code-clang-api。 朋友，你有尝试过使用clang吗？clang是一个开源的编译器，正处于活跃的开发当中。clang的目标是代替GCC来编译C、C++以及Objective-C。和GCC相比，clang更快，并且能够生成相对更快的代码，还可以输出更多有用的错误信息。 如果你想要以编程的方式来编译代">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/%E5%A3%81%E7%BA%B8/wallhaven-m9eqg9.jpg">
+<meta property="article:published_time" content="2022-08-10T05:40:08.000Z">
+<meta property="article:modified_time" content="2023-08-25T08:01:17.828Z">
+<meta property="article:author" content="邱维东">
+<meta property="article:tag" content="llvm">
+<meta property="article:tag" content="clang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/%E5%A3%81%E7%BA%B8/wallhaven-m9eqg9.jpg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/icon.png"><link rel="canonical" href="https://qiu-weidong.github.io/2022/08/10/llvm/compiling-code-clang-api/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 邱维东","link":"链接: ","source":"来源: 邱维东","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '使用clang API来编译代码',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-25 16:01:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/iconfont.css"><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/inject.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/matrix/wallhaven-5dpy80.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> 书籍</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-m9eqg9.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">邱维东</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> 书籍</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">使用clang API来编译代码</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-10T05:40:08.000Z" title="发表于 2022-08-10 13:40:08">2022-08-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-25T08:01:17.828Z" title="更新于 2023-08-25 16:01:17">2023-08-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/llvm/">llvm</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.4k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>5分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="使用clang API来编译代码"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>这篇博客翻译自<a target="_blank" rel="noopener" href="https://fdiv.net/2012/08/15/compiling-code-clang-api">https://fdiv.net/2012/08/15/compiling-code-clang-api</a>。</p>
+<p>朋友，你有尝试过使用clang吗？clang是一个开源的编译器，正处于活跃的开发当中。clang的目标是代替GCC来编译C、C++以及Objective-C。和GCC相比，clang更快，并且能够生成相对更快的代码，还可以输出更多有用的错误信息。</p>
+<p>如果你想要以编程的方式来编译代码，clang是一个更好的选择。和GCC不同，clang既是一个工具也是一系列的API，这使得clang的源代码能够更容易被理解并复用。而且，Clang 是在 BSD 许可下分发的，对于我们这些从事与 GCC 的 GPL 许可不兼容的项目的人来说无疑是一个好消息。</p>
+<p>Kosada正在进行一个很酷的项目，这个项目建立在clang以及其底层的llvm框架之上。在使用clang的过程当中，我看到了编写代码来完成其他代码的编译工作是多么的简单。真的，现在回想起来真的很简单。我写的代码很简单，但是我花了很多时间挖掘 Clang 源代码来弄清楚要写什么。所以这是我对 Clang 社区的第一个贡献：两个使用 Clang API 以编程方式构建代码的示例。这些示例编译的程序是 libcurl 示例之一，getinmemory.c。 我选择它是因为它演示了包含头文件和链接一个库。</p>
+<p>这些示例参考了 Clang 源代码。 你可以在这里下载。 我使用的是 3.1 版。</p>
+<p>您可以在此处下载示例代码。</p>
+<h2 id="将一个源文件编译为可执行文件的示例">将一个源文件编译为可执行文件的示例</h2>
+<p>你有一个<code>a.c</code>的源文件，现在将它编译并链接为一个可执行文件。</p>
+<p>简单地说，你需要这样做：先创建一个<code>Driver</code>对象，并且传递一系列参数——这些参数和你使用命令行运行clang的参数相同。告诉driver构建一个<code>Compilation</code>对象并执行之。恭喜，你方才编译并链接了一个C源文件。</p>
+<p>这基本上就是在命令行上运行 clang 时调用的代码所做的事情。在clang的源代码中，这些步骤出现在<code>tools/driver/driver.cpp</code>中。下面的例子(build_executable.cpp)是它的超简化版。</p>
+<p>首先需要给<code>Driver</code>设置参数:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 源文件的路径</span></span><br><span class="line">string inputPath = <span class="string">&quot;getinmemory.c&quot;</span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 输出可执行文件的路径</span></span><br><span class="line">string outputPath = <span class="string">&quot;getinmemory&quot;</span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// clang的路径 (比如 /usr/local/bin/clang)</span></span><br><span class="line">llvm::sys::Path clangPath = llvm::sys::Program::<span class="built_in">FindProgramByName</span>(<span class="string">&quot;clang&quot;</span>);</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 需要传递给clang driver的参数:</span></span><br><span class="line"><span class="comment">//    clang getinmemory.c -lcurl -v</span></span><br><span class="line">vector&lt;<span class="type">const</span> <span class="type">char</span> *&gt; args;</span><br><span class="line">args.<span class="built_in">push_back</span>(clangPath.<span class="built_in">c_str</span>());</span><br><span class="line">args.<span class="built_in">push_back</span>(inputPath.<span class="built_in">c_str</span>());</span><br><span class="line">args.<span class="built_in">push_back</span>(<span class="string">&quot;-l&quot;</span>);</span><br><span class="line">args.<span class="built_in">push_back</span>(<span class="string">&quot;curl&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p><code>Driver</code>需要一个<code>DiagnosticsEngine </code>来报告错误，创建一个吧。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">clang::TextDiagnosticPrinter *DiagClient = <span class="keyword">new</span> clang::<span class="built_in">TextDiagnosticPrinter</span>(llvm::<span class="built_in">errs</span>(), clang::<span class="built_in">DiagnosticOptions</span>());</span><br><span class="line"><span class="function">clang::IntrusiveRefCntPtr&lt;clang::DiagnosticIDs&gt; <span class="title">DiagID</span><span class="params">(<span class="keyword">new</span> clang::DiagnosticIDs())</span></span>;</span><br><span class="line"><span class="function">clang::DiagnosticsEngine <span class="title">Diags</span><span class="params">(DiagID, DiagClient)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>创建<code>Driver</code>自身:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">clang::<span class="function">driver::Driver <span class="title">TheDriver</span><span class="params">(args[<span class="number">0</span>], llvm::sys::getDefaultTargetTriple(), outputPath, <span class="literal">true</span>, Diags)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>Driver</code>不知道如何完成编译和链接代码的繁重工作，而是更多的承担着项目管理者的角色。它找出需要完成的任务，并告诉 Clang 的其他部分或其他工具（如 ld）来完成这些任务。任务列表封装在一个<code>Compilation</code>对象中，构建并执行之。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create the set of actions to perform</span></span><br><span class="line"><span class="function">clang::OwningPtr&lt;clang::driver::Compilation&gt; <span class="title">C</span><span class="params">(TheDriver.BuildCompilation(args))</span></span>;</span><br><span class="line"> </span><br><span class="line"><span class="comment">// Carry out the actions</span></span><br><span class="line"><span class="type">int</span> Res = <span class="number">0</span>;</span><br><span class="line"><span class="type">const</span> clang::driver::Command *FailingCommand = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (C)</span><br><span class="line">    Res = TheDriver.<span class="built_in">ExecuteCompilation</span>(*C, FailingCommand);</span><br></pre></td></tr></table></figure>
+<p>如果执行出错，可以打印错误:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (Res &lt; <span class="number">0</span>)</span><br><span class="line">    TheDriver.<span class="built_in">generateCompilationDiagnostics</span>(*C, FailingCommand);</span><br></pre></td></tr></table></figure>
+<h3 id="福利-打印编译的任务">福利:打印编译的任务</h3>
+<p>如果您想知道 Compilation 对象中的那些“任务”到底是什么，您可以像这样打印它们:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TheDriver.<span class="built_in">PrintActions</span>(*C);</span><br></pre></td></tr></table></figure>
+<p>会得到类似如下的输出:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">0: input, &quot;getinmemory.c&quot;, c</span><br><span class="line">1: preprocessor, &#123;0&#125;, cpp-output</span><br><span class="line">2: compiler, &#123;1&#125;, assembler</span><br><span class="line">3: assembler, &#123;2&#125;, object</span><br><span class="line">4: input, &quot;curl&quot;, object</span><br><span class="line">5: linker, &#123;3, 4&#125;, image</span><br><span class="line">6: bind-arch, &quot;x86_64&quot;, &#123;5&#125;, image</span><br></pre></td></tr></table></figure>
+<h3 id="福利-打印-verbose-信息来帮助调试">福利: 打印&quot;verbose&quot;信息来帮助调试</h3>
+<p>无论是在命令行上还是通过 Clang API 运行 clang，您都可以通过传递 -v 标志打印额外的信息来帮助您进行调试。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">args.<span class="built_in">push_back</span>(<span class="string">&quot;-v&quot;</span>);      <span class="comment">// verbose</span></span><br></pre></td></tr></table></figure>
+<p>你会得到类似如下输出:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">clang version 3.1 (branches/release_31)</span><br><span class="line">Target: x86_64-apple-darwin10.8.0</span><br><span class="line">Thread model: posix</span><br><span class="line"> &quot;/usr/local/Cellar/llvm/3.1/bin/clang&quot; -cc1 -triple x86_64-apple-macosx10.6.0 -emit-obj -mrelax-all -disable-free -main-file-name getinmemory.c -pic-level 2 -mdisable-fp-elim -masm-verbose -munwind-tables -target-cpu core2 -target-linker-version 97.17 -v -resource-dir /usr/local/Cellar/llvm/3.1/bin/../lib/clang/3.1 -fmodule-cache-path /var/folders/l0/l0JTY1yrHVyI-wLWRDrCW++++TI/-Tmp-/clang-module-cache -fdebug-compilation-dir &quot;/Users/jaymie/kosada/fdiv/Clang API&quot; -ferror-limit 19 -fmessage-length 111 -stack-protector 1 -mstackrealign -fblocks -fobjc-dispatch-method=mixed -fobjc-default-synthesize-properties -fdiagnostics-show-option -fcolor-diagnostics -o /var/folders/l0/l0JTY1yrHVyI-wLWRDrCW++++TI/-Tmp-/getinmemory-azlq7U.o -x c getinmemory.c</span><br><span class="line">clang -cc1 version 3.1 based upon LLVM 3.1 default target x86_64-apple-darwin10.8.0</span><br><span class="line">#include &quot;...&quot; search starts here:</span><br><span class="line">#include &lt;...&gt; search starts here:</span><br><span class="line"> /usr/local/include</span><br><span class="line"> /usr/local/Cellar/llvm/3.1/bin/../lib/clang/3.1/include</span><br><span class="line"> /usr/include</span><br><span class="line"> /System/Library/Frameworks (framework directory)</span><br><span class="line"> /Library/Frameworks (framework directory)</span><br><span class="line">End of search list.</span><br><span class="line"> &quot;/usr/bin/ld&quot; -dynamic -arch x86_64 -macosx_version_min 10.6.0 -o getinmemory -lcrt1.10.6.o /var/folders/l0/l0JTY1yrHVyI-wLWRDrCW++++TI/-Tmp-/getinmemory-azlq7U.o -lcurl -lSystem</span><br></pre></td></tr></table></figure>
+<p>输出显示<code>Driver</code>正在调用 clang 进行编译和 ld 进行链接。 如您所见，除了我们传入的参数之外，<code>Driver</code>还为每次调用添加了自己的参数。-v 标志显示了编译器和链接器是如何被调用的。</p>
+<h3 id="福利-构建一个C-文件">福利: 构建一个C++文件</h3>
+<p>如果你正在编译的文件是 C++ 而不是 C，你可以告诉 Driver 像 clang++ 而不是 clang：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TheDriver.CCCIsCXX = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://qiu-weidong.github.io">邱维东</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://qiu-weidong.github.io/2022/08/10/llvm/compiling-code-clang-api/">https://qiu-weidong.github.io/2022/08/10/llvm/compiling-code-clang-api/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://qiu-weidong.github.io" target="_blank">邱维东</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/llvm/">llvm</a><a class="post-meta__tags" href="/tags/clang/">clang</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-m9eqg9.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/05/01/llvm/build/" title="编译LLVM"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-m96dl8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-05-01</div><div class="title">编译LLVM</div></div></a></div><div><a href="/2022/06/12/llvm/Advanced-Functional-Constructs/" title="高级结构"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-727ge3.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-12</div><div class="title">高级结构</div></div></a></div><div><a href="/2022/06/12/llvm/Control-Flow-Constructs/" title="控制流结构"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-47z5vy.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-12</div><div class="title">控制流结构</div></div></a></div><div><a href="/2022/06/09/llvm/Basic-Constructs/" title="基本结构"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-zxle9g.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-09</div><div class="title">基本结构</div></div></a></div><div><a href="/2022/06/12/llvm/Epilogue/" title="结语"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-6o1g8x.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-12</div><div class="title">结语</div></div></a></div><div><a href="/2022/06/12/llvm/Exception-Handling/" title="异常处理"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-x1gw83.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-12</div><div class="title">异常处理</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/matrix/wallhaven-5dpy80.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">邱维东</div><div class="author-info__description">靡不有初, 鲜克有终</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Qiu-Weidong"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Qiu-Weidong" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.zhihu.com/people/qiu-yan-zu-65" target="_blank" title="知乎"><i class="fa-brands fa-zhihu"></i></a><a class="social-icon" href="https://space.bilibili.com/381348550?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B0%86%E4%B8%80%E4%B8%AA%E6%BA%90%E6%96%87%E4%BB%B6%E7%BC%96%E8%AF%91%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E7%9A%84%E7%A4%BA%E4%BE%8B"><span class="toc-number">1.</span> <span class="toc-text">将一个源文件编译为可执行文件的示例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%8F%E5%88%A9-%E6%89%93%E5%8D%B0%E7%BC%96%E8%AF%91%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">福利:打印编译的任务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%8F%E5%88%A9-%E6%89%93%E5%8D%B0-verbose-%E4%BF%A1%E6%81%AF%E6%9D%A5%E5%B8%AE%E5%8A%A9%E8%B0%83%E8%AF%95"><span class="toc-number">1.2.</span> <span class="toc-text">福利: 打印&quot;verbose&quot;信息来帮助调试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A6%8F%E5%88%A9-%E6%9E%84%E5%BB%BA%E4%B8%80%E4%B8%AAC-%E6%96%87%E4%BB%B6"><span class="toc-number">1.3.</span> <span class="toc-text">福利: 构建一个C++文件</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/11/07/d3/d301/" title="新建 d3 项目"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-o3mmpp.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="新建 d3 项目"/></a><div class="content"><a class="title" href="/2023/11/07/d3/d301/" title="新建 d3 项目">新建 d3 项目</a><time datetime="2023-11-07T12:20:34.000Z" title="发表于 2023-11-07 20:20:34">2023-11-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/26/pytorch/" title="pytorch 安装"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-rdxwkw.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pytorch 安装"/></a><div class="content"><a class="title" href="/2023/10/26/pytorch/" title="pytorch 安装">pytorch 安装</a><time datetime="2023-10-26T06:48:06.000Z" title="发表于 2023-10-26 14:48:06">2023-10-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/19/grafana/grafana/" title="grafana 安装和配置"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-57ogy3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="grafana 安装和配置"/></a><div class="content"><a class="title" href="/2023/10/19/grafana/grafana/" title="grafana 安装和配置">grafana 安装和配置</a><time datetime="2023-10-19T07:25:39.000Z" title="发表于 2023-10-19 15:25:39">2023-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/03/vscode/shortcut/" title="vscode 快捷键"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-6o1g8x.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vscode 快捷键"/></a><div class="content"><a class="title" href="/2023/10/03/vscode/shortcut/" title="vscode 快捷键">vscode 快捷键</a><time datetime="2023-10-03T05:18:22.000Z" title="发表于 2023-10-03 13:18:22">2023-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/02/elasticsearch/filebeat/" title="filebeat 部署和使用"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-zxle9g.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="filebeat 部署和使用"/></a><div class="content"><a class="title" href="/2023/10/02/elasticsearch/filebeat/" title="filebeat 部署和使用">filebeat 部署和使用</a><time datetime="2023-10-02T12:04:38.000Z" title="发表于 2023-10-02 20:04:38">2023-10-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/moon.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 邱维东</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">燕歌远别，悲不自胜。楚老相逢，泣将何及。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'default' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '8fd816db854286adc715',
+      clientSecret: 'f0d1be4118b23d1e601e988b1a47b063c5ac651e',
+      repo: 'qiu-weidong.github.io',
+      owner: 'Qiu-Weidong',
+      admin: ['Qiu-Weidong'],
+      id: '7a6ff164790c58ac7ade676c410ceea4',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

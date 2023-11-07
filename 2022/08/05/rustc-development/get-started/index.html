@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>开始 | 邱维东</title><meta name="author" content="邱维东"><meta name="copyright" content="邱维东"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="本文档翻译自https:&#x2F;&#x2F;rustc-dev-guide.rust-lang.org&#x2F;getting-started.html 本文档并不全面；它只关注最有用的一些东西，以方便快速入门。获取更多信息，请参阅本章以了解如何构建和运行编译器。 提出问题 rust编译器团队(即t-compiler)经常在Zulip上划水，你可以很容易在这里找到问题的答案。 **请大胆提问!**很多人觉得提问会浪费专家">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开始">
+<meta property="og:url" content="https://qiu-weidong.github.io/2022/08/05/rustc-development/get-started/index.html">
+<meta property="og:site_name" content="邱维东">
+<meta property="og:description" content="本文档翻译自https:&#x2F;&#x2F;rustc-dev-guide.rust-lang.org&#x2F;getting-started.html 本文档并不全面；它只关注最有用的一些东西，以方便快速入门。获取更多信息，请参阅本章以了解如何构建和运行编译器。 提出问题 rust编译器团队(即t-compiler)经常在Zulip上划水，你可以很容易在这里找到问题的答案。 **请大胆提问!**很多人觉得提问会浪费专家">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/%E5%A3%81%E7%BA%B8/wallhaven-nkd1ed.jpg">
+<meta property="article:published_time" content="2022-08-05T02:37:04.000Z">
+<meta property="article:modified_time" content="2023-08-25T08:01:17.831Z">
+<meta property="article:author" content="邱维东">
+<meta property="article:tag" content="rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/%E5%A3%81%E7%BA%B8/wallhaven-nkd1ed.jpg"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/icon.png"><link rel="canonical" href="https://qiu-weidong.github.io/2022/08/05/rustc-development/get-started/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":300},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: 邱维东","link":"链接: ","source":"来源: 邱维东","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '开始',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-08-25 16:01:17'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/iconfont.css"><link rel="stylesheet" href="/css/font.css"><link rel="stylesheet" href="/css/inject.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/matrix/wallhaven-5dpy80.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> 书籍</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-nkd1ed.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">邱维东</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fa fa-image"></i><span> 图库</span></a></div><div class="menus_item"><a class="site-page" href="/book/"><i class="fa-fw fa fa-book"></i><span> 书籍</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">开始</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-08-05T02:37:04.000Z" title="发表于 2022-08-05 10:37:04">2022-08-05</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-08-25T08:01:17.831Z" title="更新于 2023-08-25 16:01:17">2023-08-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/rust/">rust</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">932</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>2分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="开始"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/hint.css/2.4.1/hint.min.css"><p>本文档翻译自<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/getting-started.html">https://rustc-dev-guide.rust-lang.org/getting-started.html</a></p>
+<p>本文档并不全面；它只关注最有用的一些东西，以方便快速入门。获取更多信息，请参阅<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/how-to-build-and-run.html">本章</a>以了解如何构建和运行编译器。</p>
+<h2 id="提出问题">提出问题</h2>
+<p>rust编译器团队(即<code>t-compiler</code>)经常在<a target="_blank" rel="noopener" href="https://rust-lang.zulipchat.com/#narrow/stream/131828-t-compiler">Zulip</a>上划水，你可以很容易在这里找到问题的答案。</p>
+<p>**请大胆提问!**很多人觉得提问会浪费专家的时间，但没有任何一个<code>t-compiler</code>的专家会这样认为，贡献者对我们来说十分重要。</p>
+<p>还有，如果你不介意，请使用公共主题，这样别人也可以看到问题和答案，而且有可能将你的问题和答案整合到本文档中。</p>
+<h3 id="专家介绍">专家介绍</h3>
+<p>并非所有<code>t-compiler</code>专家都精通<code>rustc</code>的任何细节，毕竟这是一个很大的项目。要了解每个专家擅长的部分，可以查阅<a target="_blank" rel="noopener" href="https://github.com/rust-lang/compiler-team/blob/master/content/experts/map.toml">专家映射表</a>。</p>
+<p>这个专家映射表并不完整，如果找不到要咨询的专家，也欢迎提问。</p>
+<h3 id="礼貌">礼貌</h3>
+<p>我们确实要求您注意在您的问题中包含尽可能多的有用信息，但我们认识到，如果您不熟悉<code>Rust</code>，这可能会很困难。</p>
+<p>只是在不提供任何上下文的情况下 ping 某人可能会有点烦人并且只会产生噪音，毕竟每一个<code>t-compiler</code>人员每天会收到很多的ping。</p>
+<h2 id="克隆并构建">克隆并构建</h2>
+<h3 id="系统要求">系统要求</h3>
+<p>网络要连上。<br>
+首先需要有python，2或3都可以。至于硬件，最好有30G以上的硬盘空间、8G以上的内存以及2个以上的处理器。更好的电脑可以构建得更快。在接下来的章节中，将介绍几种策略来应对硬件能力不足的问题。</p>
+<p>有关软件和硬件先决条件的更多详细信息，请参阅<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/prerequisites.html">本章</a>。</p>
+<h3 id="克隆源代码">克隆源代码</h3>
+<p>就和一般的仓库一样克隆即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/rust-lang/rust.git</span><br><span class="line"><span class="built_in">cd</span> rust</span><br></pre></td></tr></table></figure>
+<h3 id="x-py介绍">x.py介绍</h3>
+<p><code>rustc</code>是一个<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/bootstrapping.html">自举</a>的编译器，这使得它比一般的rust程序更加复杂。<a target="_blank" rel="noopener" href="http://xn--Cargox-vp7il4g9hf856cb9i8y1a59fxxhnw2a2we91aq06cjw6a70lia201f3t9cz9e02gmphqu4ftoya5n1d.py">这导致的后果是你不能使用Cargo来编译而必须使用特殊工具x.py</a>。x.py用来取代Cargo的工作，如构建、测试、发布等等。</p>
+<h3 id="配置编译器">配置编译器</h3>
+<p>在仓库的顶层目录执行下属命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./x.py setup</span><br></pre></td></tr></table></figure>
+<p>这条命令将进行一些初始化，并引导你完成交互设置以创建主要配置文件config.toml。</p>
+<p>有关配置的更多信息，请参阅<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/how-to-build-and-run.html#create-a-configtoml">本章</a>。</p>
+<h3 id="常用x-py命令">常用x.py命令</h3>
+<p>当你开发rustc、std、rustdoc以及其他的工具时，以下命令会经常使用到。</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>何时使用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>./x.py check</td>
+<td>快速检查是否大多数目标已经编译; <a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/suggested.html#configuring-rust-analyzer-for-rustc">rust-analizer</a>会自动帮你运行这条命令</td>
+</tr>
+<tr>
+<td>./x.py build</td>
+<td>构建rustc、std和rustdoc</td>
+</tr>
+<tr>
+<td>./x.py test</td>
+<td>运行所有测试</td>
+</tr>
+<tr>
+<td>./x.py fmt</td>
+<td>格式化代码</td>
+</tr>
+</tbody>
+</table>
+<p>这些命令中的每一个都有值得学习的选项和论据，特别是 ./x.py build 和 ./x.py test。 他们提供了许多编译或测试代码子集的方法，可以节省大量时间。</p>
+<p>更多信息请查阅<a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/building/how-to-build-and-run.html">build</a>、 <a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/tests/intro.html">test</a>、 <a target="_blank" rel="noopener" href="https://rustc-dev-guide.rust-lang.org/rustdoc.html">rustdoc</a>。</p>
+<h3 id="为其他rust项目贡献代码">为其他rust项目贡献代码</h3>
+<p>在 rust-lang/rust 存储库之外，您还可以为许多其他项目做出贡献，包括 clippy、miri、chalk 和许多其他项目。</p>
+<p>这些仓库可能有自己的贡献指南和程序。 其中许多归工作组所有。 有关更多信息，请参阅这些仓库的自述文件中的文档。</p>
+<h3 id="通过其他方式贡献代码">通过其他方式贡献代码</h3>
+<p>略。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://qiu-weidong.github.io">邱维东</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://qiu-weidong.github.io/2022/08/05/rustc-development/get-started/">https://qiu-weidong.github.io/2022/08/05/rustc-development/get-started/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://qiu-weidong.github.io" target="_blank">邱维东</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/rust/">rust</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-nkd1ed.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/06/14/llvm/Exploring-Dynamic-Dispatch-in-Rust/" title="探索 Rust 中的动态调度"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/moon.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-06-14</div><div class="title">探索 Rust 中的动态调度</div></div></a></div><div><a href="/2022/08/05/rustc-development/how-to-build-and-run-the-compiler/" title="如何构建并运行编译器"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-zxle9g.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-08-05</div><div class="title">如何构建并运行编译器</div></div></a></div><div><a href="/2022/12/10/tauri/dict/" title="古代汉语词典"><img class="cover" src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-8ow38k.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-12-10</div><div class="title">古代汉语词典</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="gitalk-container"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/matrix/wallhaven-5dpy80.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">邱维东</div><div class="author-info__description">靡不有初, 鲜克有终</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">81</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">70</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">47</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Qiu-Weidong"><i class="fab fa-github"></i><span>关注我</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Qiu-Weidong" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="https://www.zhihu.com/people/qiu-yan-zu-65" target="_blank" title="知乎"><i class="fa-brands fa-zhihu"></i></a><a class="social-icon" href="https://space.bilibili.com/381348550?spm_id_from=333.1007.0.0" target="_blank" title="bilibili"><i class="fa-brands fa-bilibili"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8F%90%E5%87%BA%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">提出问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%93%E5%AE%B6%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">专家介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A4%BC%E8%B2%8C"><span class="toc-number">1.2.</span> <span class="toc-text">礼貌</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%8B%E9%9A%86%E5%B9%B6%E6%9E%84%E5%BB%BA"><span class="toc-number">2.</span> <span class="toc-text">克隆并构建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E8%A6%81%E6%B1%82"><span class="toc-number">2.1.</span> <span class="toc-text">系统要求</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%85%8B%E9%9A%86%E6%BA%90%E4%BB%A3%E7%A0%81"><span class="toc-number">2.2.</span> <span class="toc-text">克隆源代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#x-py%E4%BB%8B%E7%BB%8D"><span class="toc-number">2.3.</span> <span class="toc-text">x.py介绍</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%85%8D%E7%BD%AE%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">2.4.</span> <span class="toc-text">配置编译器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B8%B8%E7%94%A8x-py%E5%91%BD%E4%BB%A4"><span class="toc-number">2.5.</span> <span class="toc-text">常用x.py命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E5%85%B6%E4%BB%96rust%E9%A1%B9%E7%9B%AE%E8%B4%A1%E7%8C%AE%E4%BB%A3%E7%A0%81"><span class="toc-number">2.6.</span> <span class="toc-text">为其他rust项目贡献代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%80%9A%E8%BF%87%E5%85%B6%E4%BB%96%E6%96%B9%E5%BC%8F%E8%B4%A1%E7%8C%AE%E4%BB%A3%E7%A0%81"><span class="toc-number">2.7.</span> <span class="toc-text">通过其他方式贡献代码</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/11/07/d3/d301/" title="新建 d3 项目"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-o3mmpp.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="新建 d3 项目"/></a><div class="content"><a class="title" href="/2023/11/07/d3/d301/" title="新建 d3 项目">新建 d3 项目</a><time datetime="2023-11-07T12:20:34.000Z" title="发表于 2023-11-07 20:20:34">2023-11-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/26/pytorch/" title="pytorch 安装"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-rdxwkw.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="pytorch 安装"/></a><div class="content"><a class="title" href="/2023/10/26/pytorch/" title="pytorch 安装">pytorch 安装</a><time datetime="2023-10-26T06:48:06.000Z" title="发表于 2023-10-26 14:48:06">2023-10-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/19/grafana/grafana/" title="grafana 安装和配置"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-57ogy3.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="grafana 安装和配置"/></a><div class="content"><a class="title" href="/2023/10/19/grafana/grafana/" title="grafana 安装和配置">grafana 安装和配置</a><time datetime="2023-10-19T07:25:39.000Z" title="发表于 2023-10-19 15:25:39">2023-10-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/03/vscode/shortcut/" title="vscode 快捷键"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-6o1g8x.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="vscode 快捷键"/></a><div class="content"><a class="title" href="/2023/10/03/vscode/shortcut/" title="vscode 快捷键">vscode 快捷键</a><time datetime="2023-10-03T05:18:22.000Z" title="发表于 2023-10-03 13:18:22">2023-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/10/02/elasticsearch/filebeat/" title="filebeat 部署和使用"><img src="https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/wallhaven-zxle9g.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="filebeat 部署和使用"/></a><div class="content"><a class="title" href="/2023/10/02/elasticsearch/filebeat/" title="filebeat 部署和使用">filebeat 部署和使用</a><time datetime="2023-10-02T12:04:38.000Z" title="发表于 2023-10-02 20:04:38">2023-10-02</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/Qiu-Weidong/blog/resources/images/壁纸/moon.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 邱维东</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text">燕歌远别，悲不自胜。楚老相逢，泣将何及。</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">繁</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>(() => {
+  const $mermaidWrap = document.querySelectorAll('#article-container .mermaid-wrap')
+  if ($mermaidWrap.length) {
+    window.runMermaid = () => {
+      window.loadMermaid = true
+      const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'default' : 'default'
+
+      Array.from($mermaidWrap).forEach((item, index) => {
+        const mermaidSrc = item.firstElementChild
+        const mermaidThemeConfig = '%%{init:{ \'theme\':\'' + theme + '\'}}%%\n'
+        const mermaidID = 'mermaid-' + index
+        const mermaidDefinition = mermaidThemeConfig + mermaidSrc.textContent
+        mermaid.mermaidAPI.render(mermaidID, mermaidDefinition, (svgCode) => {
+          mermaidSrc.insertAdjacentHTML('afterend', svgCode)
+        })
+      })
+    }
+
+    const loadMermaid = () => {
+      window.loadMermaid ? runMermaid() : getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js').then(runMermaid)
+    }
+
+    window.pjax ? loadMermaid() : document.addEventListener('DOMContentLoaded', loadMermaid)
+  }
+})()</script><script>function addGitalkSource () {
+  const ele = document.createElement('link')
+  ele.rel = 'stylesheet'
+  ele.href= 'https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.css'
+  document.getElementsByTagName('head')[0].appendChild(ele)
+}
+
+function loadGitalk () {
+  function initGitalk () {
+    var gitalk = new Gitalk(Object.assign({
+      clientID: '8fd816db854286adc715',
+      clientSecret: 'f0d1be4118b23d1e601e988b1a47b063c5ac651e',
+      repo: 'qiu-weidong.github.io',
+      owner: 'Qiu-Weidong',
+      admin: ['Qiu-Weidong'],
+      id: '16a3ab90f3bab808aadfee2d78700613',
+      updateCountCallback: commentCount
+    },null))
+
+    gitalk.render('gitalk-container')
+  }
+
+  if (typeof Gitalk === 'function') initGitalk()
+  else {
+    addGitalkSource()
+    getScript('https://cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js').then(initGitalk)
+  }
+}
+
+function commentCount(n){
+  let isCommentCount = document.querySelector('#post-meta .gitalk-comment-count')
+  if (isCommentCount) {
+    isCommentCount.innerHTML= n
+  }
+}
+
+if ('Gitalk' === 'Gitalk' || !false) {
+  if (false) btf.loadComment(document.getElementById('gitalk-container'), loadGitalk)
+  else loadGitalk()
+} else {
+  function loadOtherComment () {
+    loadGitalk()
+  }
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
